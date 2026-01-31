@@ -6,7 +6,7 @@ const API_KEY = process.env.API_KEY || "";
 
 export const getStructuralAdvice = async (prompt: string): Promise<ChatMessage> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: API_KEY });
+    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
