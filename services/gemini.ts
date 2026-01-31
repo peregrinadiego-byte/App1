@@ -1,12 +1,12 @@
 
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { ChatMessage, GroundingSource } from "../types";
-
-const API_KEY = process.env.API_KEY || "";
 
 export const getStructuralAdvice = async (prompt: string): Promise<ChatMessage> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
+    // Inicializamos el cliente directamente con la variable de entorno requerida
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
@@ -21,7 +21,7 @@ export const getStructuralAdvice = async (prompt: string): Promise<ChatMessage> 
 
     const text = response.text || "Lo siento, no pude procesar esa consulta.";
     
-    // Extract grounding sources
+    // Extracción de fuentes de grounding (Google Search)
     const sources: GroundingSource[] = [];
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     if (chunks) {
@@ -44,7 +44,7 @@ export const getStructuralAdvice = async (prompt: string): Promise<ChatMessage> 
     console.error("Gemini API Error:", error);
     return {
       role: 'model',
-      text: "Hubo un error al conectar con el asistente de IA. Por favor, verifica tu conexión o intenta más tarde."
+      text: "Hubo un error al conectar con el asistente de IA. Asegúrate de que la API_KEY esté correctamente configurada en las variables de entorno de Vercel."
     };
   }
 };
